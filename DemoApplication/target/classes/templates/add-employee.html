@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Employee</title>
+    <script>
+        var stateObject = {
+            "India": { 
+                "Delhi": ["New Delhi", "North Delhi"],
+                "Kerala": ["Thiruvananthapuram", "Palakkad"],
+                "Goa": ["North Goa", "South Goa"]
+            },
+            "Australia": {
+                "South Australia": ["Dunstan", "Mitchell"],
+                "Victoria": ["Altona", "Euroa"]
+            }, 
+            "Canada": {
+                "Alberta": ["Acadia", "Bighorn"],
+                "Columbia": ["Washington", "Vancouver"]
+            }
+        };
+
+        window.onload = function () {
+            var countySel = document.getElementById("countySel"),
+                stateSel = document.getElementById("stateSel"),
+                districtSel = document.getElementById("districtSel");
+
+            for (var country in stateObject) {
+                countySel.options[countySel.options.length] = new Option(country, country);
+            }
+
+            countySel.onchange = function () {
+                stateSel.length = 1; // Remove all options bar first
+                districtSel.length = 1; // Remove all options bar first
+                if (this.selectedIndex < 1) return; // Done
+                for (var state in stateObject[this.value]) {
+                    stateSel.options[stateSel.options.length] = new Option(state, state);
+                }
+            }
+
+            stateSel.onchange = function () {
+                districtSel.length = 1; // Remove all options bar first
+                if (this.selectedIndex < 1) return; // Done
+                var district = stateObject[countySel.value][this.value];
+                for (var i = 0; i < district.length; i++) {
+                    districtSel.options[districtSel.options.length] = new Option(district[i], district[i]);
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Add Employee</h1>
+    <form action="#" th:action="@{/add-employee}" th:object="${employee}" method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" th:field="*{name}" required /><br/>
+        <br/>
+        <label for="designation">Designation:</label>
+        <input type="text" id="designation" th:field="*{designation}" required /><br/>
+        <br/>
+        <label for="salary">Salary:</label>
+        <input type="number" id="salary" th:field="*{salary}" required /><br/>
+        <br/>
+        Country: <select name="country" id="countySel" th:field="*{country}" size="1" required>
+            <option value="" selected="selected">Select Country</option>
+        </select>
+        <br/>
+        <br/>
+        State: <select name="state" id="stateSel" th:field="*{state}" size="1" required>
+            <option value="" selected="selected">Please select Country first</option>
+        </select>
+        <br/>
+        <br/>
+        City: <select name="city" id="districtSel" th:field="*{city}" size="1" required>
+            <option value="" selected="selected">Please select State first</option>
+        </select>
+        <br/>
+        <br/>
+        <button type="submit">Add</button>
+        <a href="/employees">Back to List</a>
+    </form>
+</body>
+</html>
